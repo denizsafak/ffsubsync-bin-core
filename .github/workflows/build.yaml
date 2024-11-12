@@ -1,0 +1,39 @@
+name: Build ffsubsync Executables
+
+on:
+    workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        python-version: [3.8]
+
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pyinstaller ffsubsync
+
+      - name: Build executable
+        run: |
+          pyinstaller --onefile --name ffsubsync_exe --paths $(python -c "import ffsubsync, os; print(os.path.dirname(ffsubsync.__file__))") -F $(python -c "import ffsubsync.__main__; print(ffsubsync.__main__.__file__)")
+        shell: bash
+
+      - name: Archive the build
+        uses: actions/upload-artifact@v3
+        with:
+          name: ffsubsync_exe-${{ matrix.os }}
+          path: |
+            dist/ffsubsync_exe${{ matrix.os == 'windows-latest' && '.exe' || '' }}
