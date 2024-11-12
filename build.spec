@@ -6,14 +6,12 @@ import platform
 root = '.'
 ffmpeg_bin = os.path.join(root, 'resources/ffmpeg-bin')
 datas = []
+datas.append((os.path.join(root, '__version__'), '.'))
 
 if platform.system() == 'Windows':
     arch_bits = int(platform.architecture()[0][:2])
     if arch_bits == 64:
         datas.append((os.path.join(root, 'resources/VCRUNTIME140_1.dll'), '.'))
-  
-    from PyInstaller.utils.hooks import copy_metadata
-    datas.append(*copy_metadata('webrtcvad-wheels'))
 
 a = Analysis([os.path.join(os.curdir, 'ffsubsync.py')],
              datas=datas,
