@@ -27,9 +27,14 @@ jobs:
 
       - run: pip install -r requirements.txt
 
-      - name: Build executable
-        run: |
-          pyinstaller --onefile --name ffsubsync_bin --paths $(python -c "import ffsubsync, os; print(os.path.dirname(ffsubsync.__file__))") -F $(python -c "import ffsubsync.ffsubsync; print(ffsubsync.ffsubsync.__file__)")
+      - if: matrix.os != 'macos-latest'
+        name: Install UPX
+        uses: crazy-max/ghaction-upx@v3
+        with:
+            install-only: true
+
+      - name: Build executable (*nix)
+        run: pyinstaller --onefile --name ffsubsync_bin --paths $(python -c "import ffsubsync, os; print(os.path.dirname(ffsubsync.__file__))") -F $(python -c "import ffsubsync.ffsubsync; print(ffsubsync.ffsubsync.__file__)")
         shell: bash
 
       - name: Archive the build
