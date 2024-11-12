@@ -13,7 +13,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
-        python-version: [3.8]
+      fail-fast: false
 
     steps:
       - name: Check out the repository
@@ -22,7 +22,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: ${{ matrix.python-version }}
+          python-version: 3.8
           cache: 'pip'
 
       - run: pip install -r requirements.txt
@@ -33,8 +33,19 @@ jobs:
         with:
             install-only: true
 
-      - name: Build executable (*nix)
-        run: pyinstaller --onefile --name ffsubsync_bin --paths $(python -c "import ffsubsync, os; print(os.path.dirname(ffsubsync.__file__))") -F $(python -c "import ffsubsync.ffsubsync; print(ffsubsync.ffsubsync.__file__)")
+      - name: Download ffmpeg
+        run: python ffmpeg_download.py
+        shell: bash
+
+      - if: matrix.os == 'windows-latest'
+        name: Path for windows
+        run: |
+          ls -l "$Python_ROOT_DIR/lib/site-packages/_pyinstaller_hooks_contrib/stdhooks"
+          rm -f "$Python_ROOT_DIR/lib/site-packages/_pyinstaller_hooks_contrib/stdhooks/hook-webrtcvad.py"
+        shell: bash
+
+      - name: Build executable
+        run: pyinstaller --clean -y --dist ./dist/ffsubsync_bin *.spec
         shell: bash
 
       - name: Archive the build
@@ -42,4 +53,4 @@ jobs:
         with:
           name: ffsubsync_bin-${{ matrix.os }}
           path: |
-            dist/ffsubsync_bin${{ matrix.os == 'windows-latest' && '.exe' || '' }}
+            dist/ffsubsync_bin
