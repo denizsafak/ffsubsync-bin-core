@@ -2,18 +2,17 @@
 
 import os
 import platform
+import ffsubsync.ffsubsync
 
-root = '.'
-ffmpeg_bin = os.path.join(root, 'resources/ffmpeg-bin')
+ffmpeg_bin = os.path.join(os.curdir, 'resources/ffmpeg-bin')
 datas = []
-datas.append((os.path.join(root, '__version__'), '.'))
 
 if platform.system() == 'Windows':
     arch_bits = int(platform.architecture()[0][:2])
     if arch_bits == 64:
-        datas.append((os.path.join(root, 'resources/VCRUNTIME140_1.dll'), '.'))
+        datas.append((os.path.join(os.curdir, 'resources/VCRUNTIME140_1.dll'), '.'))
 
-a = Analysis([os.path.join(os.curdir, 'ffsubsync.py')],
+a = Analysis([os.path.join(os.curdir, 'main.py')],
              datas=datas,
              hookspath=[],
              runtime_hooks=[],

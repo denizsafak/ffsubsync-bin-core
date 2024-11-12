@@ -3,3 +3,12 @@ Thumbs.db
 dist
 build
 resources/ffmpeg-bin
+scratch-notebooks/
+**/__pycache__
+build
+dist
+*.egg-info
+.vim
+__version__
+.venv/
+.coverage
