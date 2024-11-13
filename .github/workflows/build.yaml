@@ -37,13 +37,6 @@ jobs:
         run: python ffmpeg_download.py
         shell: bash
 
-      - if: matrix.os == 'windows-latest'
-        name: Path for windows
-        run: |
-          ls -l "$Python_ROOT_DIR/lib/site-packages/_pyinstaller_hooks_contrib/stdhooks"
-          rm -f "$Python_ROOT_DIR/lib/site-packages/_pyinstaller_hooks_contrib/stdhooks/hook-webrtcvad.py"
-        shell: bash
-
       - name: Build executable
         run: pyinstaller --clean -y --dist ./dist/ffsubsync_bin *.spec
         shell: bash

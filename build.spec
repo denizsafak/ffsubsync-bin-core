@@ -13,12 +13,12 @@ if platform.system() == 'Windows':
         datas.append((os.path.join(os.curdir, 'resources/VCRUNTIME140_1.dll'), '.'))
 
 a = Analysis([os.path.join(os.curdir, 'main.py')],
-             datas=datas,
-             hookspath=[],
-             runtime_hooks=[],
-             excludes=[],
-             hiddenimports=['pkg_resources.py2_warn'],  # ref: https://github.com/pypa/setuptools/issues/1963
-             binaries=[(ffmpeg_bin, 'ffmpeg-bin')],
+  datas=datas,
+  hookspath=[],
+  runtime_hooks=[],
+  excludes=[],
+  hiddenimports=['pkg_resources.py2_warn'],  # ref: https://github.com/pypa/setuptools/issues/1963
+  binaries=[(ffmpeg_bin, 'ffmpeg-bin')],
 )
 
 pyz = PYZ(a.pure)
@@ -39,4 +39,3 @@ exe = EXE(pyz,
   upx_exclude=[],
   console=True,
 )
-
