@@ -1,19 +1,34 @@
-name: Build ffsubsync Executables
+name: Build
 
 on:
-    workflow_dispatch:
-    push:
-        branches:
-            - master
+  workflow_dispatch:
+  push:
+    branches:
+      - master
+    tags:
+      - v*
+
+env:
+  DIST_DIR: /tmp/builds
 
 jobs:
   build:
-    runs-on: ${{ matrix.os }}
-
     strategy:
-      matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
       fail-fast: false
+      matrix:
+        os: [windows-latest, ubuntu-latest, macos-latest]
+        include:
+          - os: windows-latest
+            build: win-x64
+            file_name: win_amd64
+          - os: ubuntu-latest
+            build: linux-x64
+            file_name: linux_amd64
+          - os: macos-latest
+            build: osx-arm64
+            file_name: macos_arm64
+
+    runs-on: ${{ matrix.os }}
 
     steps:
       - name: Check out the repository
@@ -23,7 +38,7 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: 3.11
-          cache: 'pip'
+          cache: "pip"
 
       - run: pip install -r requirements.txt
 
@@ -31,7 +46,7 @@ jobs:
         name: Install UPX
         uses: crazy-max/ghaction-upx@v3
         with:
-            install-only: true
+          install-only: true
 
       - name: Download ffmpeg
         run: python ffmpeg_download.py
@@ -47,9 +62,58 @@ jobs:
         run: pyinstaller --clean -y --dist ./dist/ffsubsync_bin *.spec
         shell: bash
 
-      - name: Archive the build
+      - if: matrix.os != 'windows-latest'
+        name: Move to DIST_DIR (*nix)
+        run: |
+          mkdir -p $DIST_DIR
+          mv dist/ffsubsync_bin/ffsubsync_bin $DIST_DIR/ffsubsync_bin_${{ matrix.file_name }}
+        shell: bash
+
+      - if: matrix.os == 'windows-latest'
+        name: Move to DIST_DIR (win)
+        run: |
+          New-Item -ItemType Directory -Force -Path $env:DIST_DIR
+          Copy-Item -Path dist\ffsubsync_bin\ffsubsync_bin.exe -Destination $env:DIST_DIR/ffsubsync_bin_${{ matrix.file_name }}
+        shell: pwsh
+
+      - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: ffsubsync_bin-${{ matrix.os }}
-          path: |
-            dist/ffsubsync_bin
+          name: build-${{ matrix.file_name }}
+          path: ${{ env.DIST_DIR }}/*
+          if-no-files-found: error
+          retention-days: 1
+
+  release:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download builds
+        uses: actions/download-artifact@v4
+        with:
+          path: ${{ env.DIST_DIR }}
+          pattern: build-*
+          merge-multiple: true
+
+      # checksums.txt
+      - name: Calculate checksums.txt
+        run: |
+          cd $DIST_DIR
+          sha256sum * > checksums.txt
+
+          # print checksums.txt
+          cat checksums.txt
+
+          FILES=$(find ${DIST_DIR} -type f -exec readlink -f {} \;)
+          echo -e "RELEASE_FILES<<EOF" >> $GITHUB_ENV
+          echo -e "$FILES" >> $GITHUB_ENV
+          echo -e "EOF" >> $GITHUB_ENV
+
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        with:
+          prerelease: false
+          files: ${{ env.RELEASE_FILES }}
+          generate_release_notes: true
+          draft: true
