@@ -6,9 +6,9 @@ This is a binary distribution of [FFsubsync](https://github.com/smacke/ffsubsync
 
 Download the binary for your platform:
 
-| [<img width="32" src="https://github.com/qwqcode/SubRenamer/assets/22412567/2772a99b-f10f-48cd-aed7-58488e7a726e">](https://github.com/qwqcode/ffsubsync-bin/releases/latest/download/ffsubsync_bin_windows_amd64) | [<img width="32" src="https://github.com/qwqcode/SubRenamer/assets/22412567/0aef7104-b7bc-4bde-94c3-3f9df044d66b">](https://github.com/qwqcode/ffsubsync-bin/releases/latest/download/ffsubsync_bin_macos_arm64) | [<img width="32" src="https://github.com/qwqcode/SubRenamer/assets/22412567/8b41fffd-2eb3-4a78-b1bd-8751a09c36c5">](https://github.com/qwqcode/ffsubsync-bin/releases/latest/download/ffsubsync_bin_linux_amd64) |
+| [<img width="32" src="https://github.com/qwqcode/SubRenamer/assets/22412567/2772a99b-f10f-48cd-aed7-58488e7a726e">](https://github.com/qwqcode/ffsubsync-bin/releases/latest/download/ffsubsync_bin_win_amd64) | [<img width="32" src="https://github.com/qwqcode/SubRenamer/assets/22412567/0aef7104-b7bc-4bde-94c3-3f9df044d66b">](https://github.com/qwqcode/ffsubsync-bin/releases/latest/download/ffsubsync_bin_macos_arm64) | [<img width="32" src="https://github.com/qwqcode/SubRenamer/assets/22412567/8b41fffd-2eb3-4a78-b1bd-8751a09c36c5">](https://github.com/qwqcode/ffsubsync-bin/releases/latest/download/ffsubsync_bin_linux_amd64) |
 |-|-|-|
-| [Windows (x86)](https://github.com/qwqcode/ffsubsync-bin/releases/latest/download/ffsubsync_bin_windows_amd64) | [macOS (M1)](https://github.com/qwqcode/ffsubsync-bin/releases/latest/download/ffsubsync_bin_macos_arm64) | [Linux (x86)](https://github.com/qwqcode/ffsubsync-bin/releases/latest/download/ffsubsync_bin_linux_amd64) |
+| [Windows (x86)](https://github.com/qwqcode/ffsubsync-bin/releases/latest/download/ffsubsync_bin_win_amd64) | [macOS (M1)](https://github.com/qwqcode/ffsubsync-bin/releases/latest/download/ffsubsync_bin_macos_arm64) | [Linux (x86)](https://github.com/qwqcode/ffsubsync-bin/releases/latest/download/ffsubsync_bin_linux_amd64) |
 
 **If you are using [SubRenamer](https://github.com/qwqcode/SubRenamer), you could rename it to `ffsubsync_bin` and put it in the same directory as SubRenamer.**
 
