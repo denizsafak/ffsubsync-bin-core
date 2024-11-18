@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 import os
 import sys
+import platform
 from shlex import split
 import json
 import math
@@ -33,10 +34,10 @@ def execute(command: str):
     result = run(args)["retval"]
     print('\n')
     if result == 0:
-        print('✅ Subtitle synchronization completed successfully.')
+        print('[OK] Subtitle synchronization completed successfully.')
         output({ "status": "done", "command": command })
     else:
-        print('❌ Subtitle synchronization failed.')
+        print(f'[FAIL] Subtitle synchronization failed.')
         output({ "status": "fail", "command": command })
     print('\n')
 
