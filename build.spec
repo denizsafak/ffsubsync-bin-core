@@ -2,9 +2,7 @@
 
 import os
 import platform
-import ffsubsync.ffsubsync
 
-ffmpeg_bin = os.path.join(os.curdir, 'resources/ffmpeg-bin')
 datas = []
 
 if platform.system() == 'Windows':
@@ -17,8 +15,7 @@ a = Analysis([os.path.join(os.curdir, 'main.py')],
   hookspath=[],
   runtime_hooks=[],
   excludes=[],
-  hiddenimports=['pkg_resources.py2_warn'],  # ref: https://github.com/pypa/setuptools/issues/1963
-  binaries=[(ffmpeg_bin, 'ffmpeg-bin')],
+  hiddenimports=[]
 )
 
 pyz = PYZ(a.pure)
@@ -29,10 +26,9 @@ options = [('u', None, 'OPTION')]
 exe = EXE(pyz,
   a.scripts,
   a.binaries,
-  a.zipfiles,
   a.datas,
   options,
-  name='ffsubsync_bin',
+  name='ffsubsync',
   debug=False,
   strip=False,
   upx=True,
