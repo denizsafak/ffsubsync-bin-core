@@ -90,11 +90,14 @@ jobs:
           path: ${{ env.DIST_DIR }}
           pattern: build-*
           merge-multiple: true
-
+  
+      - name: Set RELEASE_FILES
+        run: echo "RELEASE_FILES=$(ls ${{ env.DIST_DIR }}/*)" >> $GITHUB_ENV
+  
       - name: Release
         uses: softprops/action-gh-release@v2
         with:
           prerelease: false
           files: ${{ env.RELEASE_FILES }}
-          generate_release_notes: true
+          generate_release_notes: false
           draft: true
