@@ -55,16 +55,20 @@ jobs:
         run: pyinstaller --clean -y --dist ./dist/ffsubsync_bin *.spec
         shell: bash
 
-      - name: Rename .exe file if on Windows
+      - name: Remove .exe extension if on Windows
         if: matrix.os == 'windows-latest'
         run: |
-          mv dist/ffsubsync_bin $DIST_DIR/ffsubsync_bin_${{ matrix.file_name%.* }}
+          mv $DIST_DIR/ffsubsync_bin_${{ matrix.file_name }} $DIST_DIR/ffsubsync_bin_${{ matrix.file_name%.exe }}
         shell: bash
-
+      
       - name: Move to DIST_DIR
         run: |
           mkdir -p $DIST_DIR
-          mv dist/ffsubsync_bin $DIST_DIR/ffsubsync_bin_${{ matrix.file_name }}
+          if [ "${{ matrix.os }}" == "windows-latest" ]; then
+            mv dist/ffsubsync_bin $DIST_DIR/ffsubsync_bin_${{ matrix.file_name%.exe }}
+          else
+            mv dist/ffsubsync_bin $DIST_DIR/ffsubsync_bin_${{ matrix.file_name }}
+          fi
         shell: bash
 
       - name: Upload build artifacts
