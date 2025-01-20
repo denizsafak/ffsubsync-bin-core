@@ -144,4 +144,4 @@ jobs:
           prerelease: false
           files: ${{ env.RELEASE_FILES }}
           generate_release_notes: true
-          draft: false
+          draft: true
