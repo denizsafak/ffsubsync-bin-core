@@ -44,8 +44,12 @@ jobs:
           fi
 
       - name: Set output for new release
-        if: steps.compare_release.outputs.new_release == 'true'
-        run: echo "::set-output name=new_release::true"
+        run: |
+          if [ "$new_release" = "true" ]; then
+            echo "::set-output name=new_release::true"
+          else
+            echo "::set-output name=new_release::false"
+          fi
 
   build:
     if: needs.check-upstream-release.outputs.new_release == 'true'
