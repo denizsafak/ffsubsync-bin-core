@@ -58,7 +58,7 @@ jobs:
           if [ "${{ matrix.os }}" == "windows-latest" ]; then
             mv dist/ffsubsync_bin/ffsubsync_bin.exe $DIST_DIR/ffsubsync_bin_${{ matrix.file_name }}
           else
-            mv dist/ffsubsync_bin/ffsubsync_bin $DIST_DIR/ffsubsync_bin_${{ matrix.file_name }}
+            mv dist/ffsubsync_bin $DIST_DIR/ffsubsync_bin_${{ matrix.file_name }}
           fi
         shell: bash
 
