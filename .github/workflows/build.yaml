@@ -58,14 +58,14 @@ jobs:
       - name: Remove .exe extension if on Windows
         if: matrix.os == 'windows-latest'
         run: |
-          mv $DIST_DIR/ffsubsync_bin_${{ matrix.file_name }} $DIST_DIR/ffsubsync_bin_${{ matrix.file_name%.exe }}
+          mv $DIST_DIR/ffsubsync_bin_${{ matrix.file_name }} $DIST_DIR/ffsubsync_bin_${{ matrix.file_name }}
         shell: bash
       
       - name: Move to DIST_DIR
         run: |
           mkdir -p $DIST_DIR
           if [ "${{ matrix.os }}" == "windows-latest" ]; then
-            mv dist/ffsubsync_bin $DIST_DIR/ffsubsync_bin_${{ matrix.file_name%.exe }}
+            mv dist/ffsubsync_bin $DIST_DIR/ffsubsync_bin_${{ matrix.file_name }}
           else
             mv dist/ffsubsync_bin $DIST_DIR/ffsubsync_bin_${{ matrix.file_name }}
           fi
