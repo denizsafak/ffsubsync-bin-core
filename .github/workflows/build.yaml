@@ -48,10 +48,6 @@ jobs:
         with:
           install-only: true
 
-      - name: Download ffmpeg
-        run: python ffmpeg_download.py
-        shell: bash
-
       - if: matrix.os == 'windows-latest'
         name: Path for windows
         run: |
