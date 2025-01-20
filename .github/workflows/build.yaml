@@ -89,11 +89,7 @@ jobs:
       - name: Calculate checksums.txt
         run: |
           cd $DIST_DIR
-          sha256sum * > checksums.txt
-  
-          # print checksums.txt
-          cat checksums.txt
-  
+          
           FILES=$(find ${DIST_DIR} -type f -exec readlink -f {} \;)
           echo "RELEASE_FILES=$(echo $FILES | tr ' ' '\n')" >> $GITHUB_ENV
         shell: bash
