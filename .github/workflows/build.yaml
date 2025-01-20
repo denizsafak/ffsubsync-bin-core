@@ -20,16 +20,13 @@ jobs:
         include:
           - os: windows-latest
             build: win-x64
-            file_name: win_amd64.exe
+            file_name: win_amd64
           - os: ubuntu-latest
             build: linux-x64
             file_name: linux_amd64
           - os: macos-latest
             build: osx-arm64
             file_name: macos_arm64
-          - os: macos-latest
-            build: osx-amd64
-            file_name: macos_amd64
 
     runs-on: ${{ matrix.os }}
 
@@ -64,11 +61,7 @@ jobs:
       - name: Move to DIST_DIR
         run: |
           mkdir -p $DIST_DIR
-          if [ "${{ matrix.os }}" == "windows-latest" ]; then
-            mv dist/ffsubsync_bin/ffsubsync_bin $DIST_DIR/ffsubsync_bin_${{ matrix.file_name%.exe }}
-          else
-            mv dist/ffsubsync_bin $DIST_DIR/ffsubsync_bin_${{ matrix.file_name }}
-          fi
+          mv dist/ffsubsync_bin $DIST_DIR/ffsubsync_bin_${{ matrix.file_name }}
         shell: bash
 
       - name: Upload build artifacts
