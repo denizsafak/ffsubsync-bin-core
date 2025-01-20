@@ -62,7 +62,7 @@ jobs:
         name: Move to DIST_DIR (*nix)
         run: |
           mkdir -p $DIST_DIR
-          mv dist/ffsubsync_bin/ffsubsync_bin $DIST_DIR/ffsubsync_bin_${{ matrix.file_name }}
+          mv dist/ffsubsync_bin $DIST_DIR/ffsubsync_bin_${{ matrix.file_name }}
         shell: bash
 
       - if: matrix.os == 'windows-latest'
