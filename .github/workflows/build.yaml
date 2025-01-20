@@ -18,6 +18,8 @@ env:
 jobs:
   check-upstream-release:
     runs-on: ubuntu-latest
+    outputs:
+      new_release: ${{ steps.set_output.outputs.new_release }}
     steps:
       - name: Check out the repository
         uses: actions/checkout@v4
@@ -44,15 +46,16 @@ jobs:
           fi
 
       - name: Set output for new release
+        id: set_output
         run: |
           if [ "$new_release" = "true" ]; then
-            echo "new_release=true" >> $GITHUB_ENV
+            echo "::set-output name=new_release::true"
           else
-            echo "new_release=false" >> $GITHUB_ENV
+            echo "::set-output name=new_release::false"
           fi
 
   build:
-    if: env.new_release == 'true'
+    if: needs.check-upstream-release.outputs.new_release == 'true'
     needs: check-upstream-release
     strategy:
       fail-fast: false
@@ -110,7 +113,7 @@ jobs:
         name: Move to DIST_DIR (win)
         run: |
           New-Item -ItemType Directory -Force -Path $env:DIST_DIR
-          Copy-Item -Path dist\ffsubsync_bin\ffsubsync.exe -Destination $env:DIST_DIR/ffsubsync_bin_${{ matrix.file_name }}
+          Copy-Item -Path dist\ffsubsync_bin\ffsubsync.exe -Destination $env.DIST_DIR/ffsubsync_bin_${{ matrix.file_name }}
         shell: pwsh
 
       - name: Upload build artifacts
