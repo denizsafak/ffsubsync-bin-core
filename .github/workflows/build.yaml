@@ -20,7 +20,7 @@ jobs:
         include:
           - os: windows-latest
             build: win-x64
-            file_name: win_amd64
+            file_name: win_amd64.exe
           - os: ubuntu-latest
             build: linux-x64
             file_name: linux_amd64
@@ -52,19 +52,15 @@ jobs:
         run: pyinstaller --clean -y --dist ./dist/ffsubsync_bin *.spec
         shell: bash
 
-      - if: matrix.os != 'windows-latest'
-        name: Move to DIST_DIR (*nix)
+      - name: Move to DIST_DIR
         run: |
           mkdir -p $DIST_DIR
-          mv dist/ffsubsync_bin $DIST_DIR/ffsubsync_bin_${{ matrix.file_name }}
+          if [ "${{ matrix.os }}" == "windows-latest" ]; then
+            mv dist/ffsubsync_bin/ffsubsync_bin.exe $DIST_DIR/ffsubsync_bin_${{ matrix.file_name }}
+          else
+            mv dist/ffsubsync_bin/ffsubsync_bin $DIST_DIR/ffsubsync_bin_${{ matrix.file_name }}
+          fi
         shell: bash
-
-      - if: matrix.os == 'windows-latest'
-        name: Move to DIST_DIR (win)
-        run: |
-          New-Item -ItemType Directory -Force -Path $env:DIST_DIR
-          Copy-Item -Path dist\ffsubsync_bin\ffsubsync_bin.exe -Destination $env:DIST_DIR/ffsubsync_bin_${{ matrix.file_name }}
-        shell: pwsh
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
@@ -88,11 +84,9 @@ jobs:
       - name: Set RELEASE_FILES
         run: |
           FILES=$(find ${DIST_DIR} -type f -exec readlink -f {} \;)
-          echo -e "RELEASE_FILES<<EOF" >> $GITHUB_ENV
-          echo -e "$FILES" >> $GITHUB_ENV
-          echo -e "EOF" >> $GITHUB_ENV
+          echo "RELEASE_FILES=$FILES" >> $GITHUB_ENV
         shell: bash
-        
+
       - name: Release
         uses: softprops/action-gh-release@v2
         with:
