@@ -20,7 +20,7 @@ jobs:
         include:
           - os: windows-latest
             build: win-x64
-            file_name: win_amd64.exe
+            file_name: win_amd64
           - os: ubuntu-latest
             build: linux-x64
             file_name: linux_amd64
@@ -42,11 +42,12 @@ jobs:
 
       - run: pip install -r requirements.txt
 
-      - if: matrix.os != 'macos-latest'
-        name: Install UPX
-        uses: crazy-max/ghaction-upx@v3
-        with:
-          install-only: true
+      - if: matrix.os == 'macos-latest'
+        name: Move to DIST_DIR (macos)
+        run: |
+          mkdir -p $DIST_DIR
+          mv dist/ffsubsync_bin $DIST_DIR/ffsubsync_bin_${{ matrix.file_name }}
+        shell: bash
 
       - if: matrix.os == 'windows-latest'
         name: Path for windows
@@ -92,8 +93,13 @@ jobs:
           merge-multiple: true
 
       - name: Set RELEASE_FILES
-        run: echo "RELEASE_FILES=$(ls ${{ env.DIST_DIR }}/* | tr '\n' ' ')" >> $GITHUB_ENV
-  
+        run: |
+          FILES=$(find ${DIST_DIR} -type f -exec readlink -f {} \;)
+          echo -e "RELEASE_FILES<<EOF" >> $GITHUB_ENV
+          echo -e "$FILES" >> $GITHUB_ENV
+          echo -e "EOF" >> $GITHUB_ENV
+        shell: bash
+        
       - name: Release
         uses: softprops/action-gh-release@v2
         with:
