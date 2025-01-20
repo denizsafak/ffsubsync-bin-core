@@ -90,9 +90,14 @@ jobs:
           path: ${{ env.DIST_DIR }}
           pattern: build-*
           merge-multiple: true
-  
-      - name: Set RELEASE_FILES
-        run: echo "RELEASE_FILES=$(ls ${{ env.DIST_DIR }}/*)" >> $GITHUB_ENV
+
+      - name: Define variables
+        run: |
+          cd $DIST_DIR
+          FILES=$(find ${DIST_DIR} -type f -exec readlink -f {} \;)
+          echo -e "RELEASE_FILES<<EOF" >> $GITHUB_ENV
+          echo -e "$FILES" >> $GITHUB_ENV
+          echo -e "EOF" >> $GITHUB_ENV
   
       - name: Release
         uses: softprops/action-gh-release@v2
