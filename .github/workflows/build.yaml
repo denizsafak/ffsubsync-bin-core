@@ -7,56 +7,12 @@ on:
       - master
     tags:
       - v*
-  schedule:
-    - cron: '0 0 * * *'  # Runs daily at midnight
 
 env:
   DIST_DIR: /tmp/builds
-  UPSTREAM_REPO: 'smacke/ffsubsync'
-  LATEST_RELEASE_FILE: '.latest_upstream_release'
 
 jobs:
-  check-upstream-release:
-    runs-on: ubuntu-latest
-    outputs:
-      new_release: ${{ steps.set_output.outputs.new_release }}
-    steps:
-      - name: Check out the repository
-        uses: actions/checkout@v4
-
-      - name: Fetch latest upstream release
-        id: fetch_release
-        run: |
-          latest_release=$(curl -s https://api.github.com/repos/${{ env.UPSTREAM_REPO }}/releases/latest | jq -r .tag_name)
-          echo "latest_release=$latest_release" >> $GITHUB_ENV
-
-      - name: Compare with last known release
-        id: compare_release
-        run: |
-          if [ -f ${{ env.LATEST_RELEASE_FILE }} ]; then
-            last_release=$(cat ${{ env.LATEST_RELEASE_FILE }})
-          else
-            last_release=""
-          fi
-          if [ "$latest_release" != "$last_release" ]; then
-            echo "new_release=true" >> $GITHUB_ENV
-            echo $latest_release > ${{ env.LATEST_RELEASE_FILE }}
-          else
-            echo "new_release=false" >> $GITHUB_ENV
-          fi
-
-      - name: Set output for new release
-        id: set_output
-        run: |
-          if [ "$new_release" = "true" ]; then
-            echo "::set-output name=new_release::true"
-          else
-            echo "::set-output name=new_release::false"
-          fi
-
   build:
-    if: needs.check-upstream-release.outputs.new_release == 'true'
-    needs: check-upstream-release
     strategy:
       fail-fast: false
       matrix:
@@ -113,7 +69,7 @@ jobs:
         name: Move to DIST_DIR (win)
         run: |
           New-Item -ItemType Directory -Force -Path $env:DIST_DIR
-          Copy-Item -Path dist\ffsubsync_bin\ffsubsync.exe -Destination $env.DIST_DIR/ffsubsync_bin_${{ matrix.file_name }}
+          Copy-Item -Path dist\ffsubsync_bin\ffsubsync.exe -Destination $env:DIST_DIR/ffsubsync_bin_${{ matrix.file_name }}
         shell: pwsh
 
       - name: Upload build artifacts
@@ -135,11 +91,15 @@ jobs:
           pattern: build-*
           merge-multiple: true
 
+      # checksums.txt
       - name: Calculate checksums.txt
         run: |
           cd $DIST_DIR
           sha256sum * > checksums.txt
+
+          # print checksums.txt
           cat checksums.txt
+
           FILES=$(find ${DIST_DIR} -type f -exec readlink -f {} \;)
           echo -e "RELEASE_FILES<<EOF" >> $GITHUB_ENV
           echo -e "$FILES" >> $GITHUB_ENV
