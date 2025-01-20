@@ -20,7 +20,7 @@ jobs:
         include:
           - os: windows-latest
             build: win-x64
-            file_name: win_amd64
+            file_name: win_amd64.exe
           - os: ubuntu-latest
             build: linux-x64
             file_name: linux_amd64
@@ -69,7 +69,7 @@ jobs:
         name: Move to DIST_DIR (win)
         run: |
           New-Item -ItemType Directory -Force -Path $env:DIST_DIR
-          Copy-Item -Path dist\ffsubsync_bin\ffsubsync_bin.exe -Destination $env:DIST_DIR/ffsubsync_bin_${{ matrix.file_name }}
+          Copy-Item -Path dist\ffsubsync_bin\ffsubsync.exe -Destination $env:DIST_DIR/ffsubsync_bin_${{ matrix.file_name }}
         shell: pwsh
 
       - name: Upload build artifacts
