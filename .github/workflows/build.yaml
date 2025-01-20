@@ -91,20 +91,6 @@ jobs:
           pattern: build-*
           merge-multiple: true
 
-      # checksums.txt
-      - name: Calculate checksums.txt
-        run: |
-          cd $DIST_DIR
-          sha256sum * > checksums.txt
-
-          # print checksums.txt
-          cat checksums.txt
-
-          FILES=$(find ${DIST_DIR} -type f -exec readlink -f {} \;)
-          echo -e "RELEASE_FILES<<EOF" >> $GITHUB_ENV
-          echo -e "$FILES" >> $GITHUB_ENV
-          echo -e "EOF" >> $GITHUB_ENV
-
       - name: Release
         uses: softprops/action-gh-release@v2
         with:
