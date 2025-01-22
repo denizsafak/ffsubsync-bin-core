@@ -1,2 +1,2 @@
 from ffsubsync.ffsubsync import main
-main()
+sys.exit(main())
